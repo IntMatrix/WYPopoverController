@@ -1806,8 +1806,15 @@ static WYPopoverTheme *defaultTheme_ = nil;
       [_backgroundView addGestureRecognizer:tap];
     }
 
-    [_inView.window addSubview:_backgroundView];
-    [_inView.window insertSubview:_overlayView belowSubview:_backgroundView];
+    //---pod file changed to allow showing alert over this popover
+      if (WY_IS_IOS_GREATER_THAN_OR_EQUAL_TO(@"8.0")) {
+          [_inView.window.rootViewController.view addSubview:_backgroundView];
+          [_inView.window.rootViewController.view insertSubview:_overlayView belowSubview:_backgroundView];
+      } else {
+          [_inView.window addSubview:_backgroundView];
+          [_inView.window insertSubview:_overlayView belowSubview:_backgroundView];
+      }
+    //---
   }
 
   [self updateThemeUI];
@@ -1840,6 +1847,8 @@ static WYPopoverTheme *defaultTheme_ = nil;
 
   void (^adjustTintDimmed)() = ^() {
 #ifdef WY_BASE_SDK_7_ENABLED
+      //---pod file changed just to avoid changing bar buttons tint color
+      /*
     if (_backgroundView.dimsBackgroundViewsTintColor && [_inView.window respondsToSelector:@selector(setTintAdjustmentMode:)]) {
       for (UIView *subview in _inView.window.subviews) {
         if (subview != _backgroundView) {
@@ -1847,6 +1856,7 @@ static WYPopoverTheme *defaultTheme_ = nil;
         }
       }
     }
+       */
 #endif
   };
 
@@ -2855,16 +2865,18 @@ static CGPoint WYPointRelativeToOrientation(CGPoint origin, CGSize size, UIInter
     _inView = [_barButtonItem valueForKey:@"view"];
     _rect = _inView.bounds;
   } else if ([_delegate respondsToSelector:@selector(popoverController:willRepositionPopoverToRect:inView:)]) {
-    CGRect anotherRect;
-    UIView *anotherInView;
+    CGRect anotherRect = CGRectZero;
+    UIView *anotherInView = nil;
 
     [_delegate popoverController:self willRepositionPopoverToRect:&anotherRect inView:&anotherInView];
 
-    if (&anotherRect != NULL) {
+    if (&anotherRect != NULL
+        && !CGRectIsEmpty(anotherRect)) {
       _rect = anotherRect;
     }
 
-    if (&anotherInView != NULL) {
+    if (&anotherInView != NULL
+        && anotherInView) {
       _inView = anotherInView;
     }
   }
