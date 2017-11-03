@@ -2106,6 +2106,15 @@ static WYPopoverTheme *defaultTheme_ = nil;
   maxX = overlayWidth - _popoverLayoutMargins.right;
   minY = WYStatusBarHeight() + _popoverLayoutMargins.top;
   maxY = overlayHeight - _popoverLayoutMargins.bottom - keyboardHeight;
+    
+    if (@available(iOS 11.0, *)) {
+        //adaptaptation of popover layout for iPhone X
+        UIWindow *window = [[UIApplication sharedApplication] keyWindow];
+        minX += window.safeAreaInsets.left;
+        maxX -= window.safeAreaInsets.right;
+        minY += window.safeAreaInsets.top;
+        maxY -= window.safeAreaInsets.bottom;
+    }
 
   // Which direction ?
   //
@@ -2672,6 +2681,15 @@ static WYPopoverTheme *defaultTheme_ = nil;
   maxX = overlayWidth - _popoverLayoutMargins.right;
   minY = WYStatusBarHeight() + _popoverLayoutMargins.top;
   maxY = overlayHeight - _popoverLayoutMargins.bottom - keyboardHeight;
+    
+    if (@available(iOS 11.0, *)) {
+        //adaptaptation of popover layout for iPhone X
+        UIWindow *window = [[UIApplication sharedApplication] keyWindow];
+        minX += window.safeAreaInsets.left;
+        maxX -= window.safeAreaInsets.right;
+        minY += window.safeAreaInsets.top;
+        maxY -= window.safeAreaInsets.bottom;
+    }
 
   CGSize result = CGSizeZero;
 
